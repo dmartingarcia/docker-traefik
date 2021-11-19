@@ -1,0 +1,38 @@
+entryPoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ':443'
+  metrics:
+    address: ':8082'
+http:
+  middlewares:
+    - simpleauth
+api:
+  dashboard: true
+certificatesResolvers:
+  lets-encrypt:
+    acme:
+      storage: acme.json
+      tlsChallenge: {}
+metrics:
+  prometheus:
+    entryPoint: metrics
+    buckets:
+      - 0.1
+      - 0.3
+      - 0.5
+      - 1.0
+      - 2.0
+      - 5.0
+providers:
+  docker:
+    watch: true
+    network: web
+  file:
+    filename: traefik_dynamic.yaml

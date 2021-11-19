@@ -1,0 +1,24 @@
+version: '3.6'
+
+services:
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    env_file: .env
+    environment:
+      - TRAEFIK_CERTIFICATESRESOLVERS_lets-encrypt_ACME_EMAIL=${EMAIL}
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yaml:/traefik.yaml
+      - ./traefik_dynamic.yaml:/traefik_dynamic.yaml
+      - ./acme.json:/acme.json
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

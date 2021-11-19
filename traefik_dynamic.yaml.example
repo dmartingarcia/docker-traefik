@@ -1,0 +1,35 @@
+http:
+  middlewares:
+    simpleauth:
+      basicAuth:
+        users:
+          - '{{ env "HTTP_BASIC_AUTH" }}'
+  routers:
+    api:
+      rule: Host(`monitor.{{ env "HTTP_HOST" }}`, `{{ env "INTERNAL_IP" }}`)
+      entrypoints:
+        - web
+        - websecure
+      middlewares:
+        - simpleauth
+      service: api@internal
+      tls:
+        certResolver: lets-encrypt
+    external:
+      entryPoints:
+        - websecure
+      rule: Host(`externalservice.{{ env "HTTP_HOST" }}`)
+      middlewares:
+        - simpleauth
+      tls:
+        certResolver: lets-encrypt
+      service: external_service
+  services:
+    external_service:
+      loadBalancer:
+        healthCheck:
+          path: /
+          port: 80
+        servers:
+          - url: "http://192.168.1.100:80"
+        passHostHeader: true
