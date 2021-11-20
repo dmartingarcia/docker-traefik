@@ -22,6 +22,7 @@ certificatesResolvers:
       tlsChallenge: {}
 metrics:
   prometheus:
+    addRoutersLabels: true
     entryPoint: metrics
     buckets:
       - 0.1
