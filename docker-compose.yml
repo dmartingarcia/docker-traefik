@@ -1,6 +1,29 @@
 version: '3.6'
 
 services:
+  authelia:
+    container_name: authelia
+    image: 'authelia/authelia'
+    restart: 'unless-stopped'
+    networks:
+      - web
+    expose:
+      - 9091
+    volumes:
+      - '${PWD}/authelia:/config'
+    environment:
+      TZ: "Europe/Madrid"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authelia.rule=Host(`auth.${HTTP_HOST}`)"
+      - "traefik.http.routers.authelia.entrypoints=websecure"
+      - "traefik.http.routers.authelia.tls=true"
+      - "traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/authz/forward-auth"
+      ## The following commented line is for configuring the Authelia URL in the proxy. We strongly suggest this is
+      ## configured in the Session Cookies section of the Authelia configuration.
+      # - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2Fauth.example.com%2F'
+      - "traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true"
+      - "traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Email,Remote-Name"
   traefik:
     image: traefik:v2.5
     container_name: traefik
