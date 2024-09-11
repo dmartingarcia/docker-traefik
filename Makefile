@@ -6,7 +6,8 @@ configure:
 	[ -f ./traefik.yaml ] && echo "traefik.yaml already exists" || cp traefik.yaml.example traefik.yaml
 	[ -f ./traefik_dynamic.yaml ] && echo "traefik_dynamic.yaml already exists" || cp traefik_dynamic.yaml.example traefik_dynamic.yaml
 	[ -f ./.env ] && echo ".env already exists" || cp .env.example .env
+	docker compose pull
 run:
-	docker-compose up -d
+	docker compose up -d
 stop:
-	docker-compose down
+	docker compose down

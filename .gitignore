@@ -2,3 +2,4 @@ acme.json
 traefik.yaml
 traefik_dynamic.yaml
 \.env
+authelia
